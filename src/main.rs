@@ -1,6 +1,5 @@
 use std::fs::File;
 use std::io::Read;
-use clap::builder::Str;
 use clap::Parser;
 use csv::StringRecord;
 
@@ -61,7 +60,7 @@ fn main() {
 }
 
 fn is_num_str(s: &str) -> bool {
-    let nInt = s.parse::<isize>();
-    let nFloat = s.parse::<f64>();
-    nInt.is_ok() || nFloat.is_ok()
+    let n_int = s.parse::<isize>();
+    let n_float = s.parse::<f64>();
+    n_int.is_ok() || n_float.is_ok()
 }
