@@ -44,7 +44,7 @@ fn main() {
             sql.pop();
             sql += " ) VALUES (";
             for value in record.iter() {
-                let s = if is_num_str(value) {
+                let s = if is_num_str(value) || is_null(value) {
                     format!(" {},", value)
                 } else { format!(" '{}',", value) };
 
@@ -62,4 +62,8 @@ fn is_num_str(s: &str) -> bool {
     let n_int = s.parse::<isize>();
     let n_float = s.parse::<f64>();
     n_int.is_ok() || n_float.is_ok()
+}
+
+fn is_null(s: &str) -> bool {
+    s == "null"
 }

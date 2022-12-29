@@ -1,0 +1,3 @@
+user_id,email,user_name,height,weight,birthday
+1,a@example.com,太郎,172.5,null,2022-05-05
+2,b@example.com,二郎,182.3,92.03,null
