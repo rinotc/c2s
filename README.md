@@ -12,20 +12,24 @@ cargo install c2s
 
 ## How to use
 
-以下のようなデータを持つCSV、test.csvがあったとして
+以下のようなデータを持つCSV、users.csvがあったとして
 
 ```csv
-user_id,email,user_name
-1,a@example.com,太郎
-2,b@example.com,二郎
+user_id,email,user_name,height,weight,birthday
+1,a@example.com,太郎,172.5,null,2022-05-05
+2,b@example.com,二郎,182.3,92.03,null
 ```
 
 次のように出力されます。
 
 ```shell
-$ c2s test.csv
-INSERT INTO test ( user_id, email, user_name ) VALUES ( 1, 'a@example.com', '太郎' );
-INSERT INTO test ( user_id, email, user_name ) VALUES ( 2, 'b@example.com', '二郎' );
+$ c2s users.csv
+INSERT INTO users ( user_id, email, user_name, height, weight, birthday ) VALUES ( 1, 'a@example.com', '太郎', 172.5, null, '2022-05-05' );
+INSERT INTO users ( user_id, email, user_name, height, weight, birthday ) VALUES ( 2, 'b@example.com', '二郎', 182.3, 92.03, null );
 ```
 * ファイル名: テーブル名として扱われます。
 * 1行目: カラム名として扱われます。
+* 明示的に `null` と書かれているものを`null`と出力します。何もないところには、`tanaka,,65.0` のような部分は `VALUES ( ...,'tanaka','',65.0 )` と出力されます。
+
+
+
