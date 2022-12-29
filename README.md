@@ -2,17 +2,17 @@
 
 CSVファイルから、SQLのINSERT文をgenerateするツール
 
-## how to install
+## How to install
 
-### using cargo
+### install via cargo
 
 ```shell
 cargo install c2s
 ```
 
-## example
+## How to use
 
-test.csv
+以下のようなデータを持つCSV、test.csvがあったとして
 
 ```csv
 user_id,email,user_name
@@ -20,9 +20,10 @@ user_id,email,user_name
 2,b@example.com,二郎
 ```
 
-が、次のように変換されます。
+次のように出力されます。
 
-```sql
+```shell
+$ c2s test.csv
 INSERT INTO test ( user_id, email, user_name ) VALUES ( 1, 'a@example.com', '太郎' );
 INSERT INTO test ( user_id, email, user_name ) VALUES ( 2, 'b@example.com', '二郎' );
 ```
