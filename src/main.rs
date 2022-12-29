@@ -1,4 +1,3 @@
-use std::fmt::format;
 use std::fs::File;
 use std::io::Read;
 use clap::builder::Str;
@@ -7,13 +6,13 @@ use csv::StringRecord;
 
 #[derive(Parser, Debug)]
 #[clap(
-    name = "c2s",
-    author = "rinotc",
-    version = "0.1",
-    about = "csv to insert sql."
+name = "c2s",
+author = "rinotc",
+version = "0.1",
+about = "csv to insert sql."
 )]
 struct Args {
-    csv_file_path: String
+    csv_file_path: String,
 }
 
 fn main() {
@@ -32,11 +31,9 @@ fn main() {
 
     let mut column_names: Vec<String> = Vec::new();
     let mut row_num = 1;
-    let mut column_count = 0;
     for record in reader.records() {
         let record: StringRecord = record.expect("something happened.");
         if row_num == 1 {
-            column_count = record.len();
             for value in record.iter() {
                 column_names.push(value.to_string());
             }
@@ -46,8 +43,25 @@ fn main() {
                 let s = format!(" {},", c);
                 sql += s.as_str();
             }
+            sql.pop();
+            sql += " ) VALUES (";
+            for value in record.iter() {
+                let s = if is_num_str(value) {
+                    format!(" {},", value)
+                } else { format!(" '{}',", value) };
+
+                sql += s.as_str();
+            }
+            sql.pop();
+            sql += " );";
             println!("{}", sql);
         }
         row_num += 1;
     }
+}
+
+fn is_num_str(s: &str) -> bool {
+    let nInt = s.parse::<isize>();
+    let nFloat = s.parse::<f64>();
+    nInt.is_ok() || nFloat.is_ok()
 }
