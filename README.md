@@ -2,6 +2,14 @@
 
 CSVファイルから、SQLのINSERT文をgenerateするツール
 
+## how to install
+
+### using cargo
+
+```shell
+cargo install c2s
+```
+
 ## example
 
 test.csv
