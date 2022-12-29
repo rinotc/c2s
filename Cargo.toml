@@ -2,6 +2,14 @@
 name = "c2s"
 version = "0.1.0"
 edition = "2021"
+authors = ["rinotc <toshinori.chiba.p@gmail.com>"]
+license = "MIT"
+description = "SQL generate tool from csv."
+readme = "README.md"
+homepage = "https://github.com/rinotc/c2s"
+repository = "https://github.com/rinotc/c2s"
+keywords = ["cli", "sql", "csv"]
+categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
