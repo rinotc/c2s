@@ -17,7 +17,6 @@ struct Args {
 fn main() {
     let args: Args = Args::parse();
     assert!(args.csv_file_path.contains(".csv"));
-    println!("csv file path: {}", args.csv_file_path);
     let table_name = args.csv_file_path.replace(".csv", "");
     let mut file = File::open(args.csv_file_path).expect("file not found.");
     let mut csv_text = String::new();
