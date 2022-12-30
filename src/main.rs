@@ -12,12 +12,13 @@ about = "csv to insert sql."
 )]
 struct Args {
     csv_file_path: String,
+    table_name: Option<String>,
 }
 
 fn main() {
     let args: Args = Args::parse();
     assert!(args.csv_file_path.contains(".csv"));
-    let table_name = args.csv_file_path.replace(".csv", "");
+    let table_name = args.table_name.unwrap_or(args.csv_file_path.replace(".csv", ""));
     let mut file = File::open(args.csv_file_path).expect("file not found.");
     let mut csv_text = String::new();
     file.read_to_string(&mut csv_text)
@@ -74,7 +75,7 @@ fn is_num_str(s: &str) -> bool {
 }
 
 fn is_null(s: &str) -> bool {
-    s == "null"
+    s == "null" || s == "NULL"
 }
 
 #[cfg(test)]
@@ -112,6 +113,7 @@ mod tests {
     fn is_null_test() {
         assert_eq!(is_null("null"), true);
         assert_eq!(is_null("nil"), false);
+        assert_eq!(is_null("NULL"), true)
     }
 
     #[test]
