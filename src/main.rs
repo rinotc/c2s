@@ -23,12 +23,20 @@ fn main() {
     file.read_to_string(&mut csv_text)
         .expect("something went wrong read the file");
 
+    let sqls = csv_2_insert_sql(csv_text, table_name);
+    sqls.iter().for_each(|sql| {
+        println!("{}", sql)
+    });
+}
+
+fn csv_2_insert_sql(csv_text: String, table_name: String) -> Vec<String> {
     let mut reader = csv::ReaderBuilder::new()
         .has_headers(false)
         .from_reader(csv_text.as_bytes());
 
     let mut column_names: Vec<String> = Vec::new();
     let mut row_num = 1;
+    let mut insert_sql_list = Vec::new();
     for record in reader.records() {
         let record: StringRecord = record.expect("something happened.");
         if row_num == 1 {
@@ -52,10 +60,11 @@ fn main() {
             }
             sql.pop();
             sql += " );";
-            println!("{}", sql);
+            insert_sql_list.push(sql);
         }
         row_num += 1;
     }
+    insert_sql_list.to_vec()
 }
 
 fn is_num_str(s: &str) -> bool {
@@ -66,4 +75,58 @@ fn is_num_str(s: &str) -> bool {
 
 fn is_null(s: &str) -> bool {
     s == "null"
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn is_num_str_i32_max_str_should_be_true() {
+        assert_eq!(is_num_str(i32::MAX.to_string().as_str()), true);
+    }
+
+    #[test]
+    fn is_num_str_i32_min_str_should_be_true() {
+        assert_eq!(is_num_str(i32::MIN.to_string().as_str()), true);
+    }
+
+    #[test]
+    fn is_num_str_float_max_str_should_be_true() {
+        assert_eq!(is_num_str(1.7976931348623157e308.to_string().as_str()), true);
+    }
+
+    #[test]
+    fn is_num_str_float_min_str_should_be_true() {
+        assert_eq!(is_num_str((-1.7976931348623157e308).to_string().as_str()), true);
+    }
+
+    #[test]
+    fn is_num_str_str_should_be_false() {
+        assert_eq!(is_num_str("abcdefghijklmnopqrstuvwxyz"), false);
+        assert_eq!(is_num_str("ABCDEFGHIJKLMNOPQRSTUVWXYZ"), false);
+        assert_eq!(is_num_str("あ井上お"), false);
+    }
+
+    #[test]
+    fn is_null_test() {
+        assert_eq!(is_null("null"), true);
+        assert_eq!(is_null("nil"), false);
+    }
+
+    #[test]
+    fn csv_2_insert_sql_test() {
+        let csv_text = "\
+user_id,email,user_name,height,weight,birthday
+1,a@example.com,太郎,172.5,null,2022-05-05
+2,b@example.com,二郎,182.3,92.03,null";
+        let table_name = "users";
+        let actual = csv_2_insert_sql(csv_text.to_string(), table_name.to_string());
+
+        let expect1 = "INSERT INTO users ( user_id, email, user_name, height, weight, birthday ) VALUES ( 1, 'a@example.com', '太郎', 172.5, null, '2022-05-05' );";
+        let expect2 = "INSERT INTO users ( user_id, email, user_name, height, weight, birthday ) VALUES ( 2, 'b@example.com', '二郎', 182.3, 92.03, null );";
+
+        assert_eq!(actual[0], expect1.to_string());
+        assert_eq!(actual[1], expect2.to_string());
+    }
 }
